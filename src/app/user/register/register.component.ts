@@ -38,7 +38,7 @@ export class RegisterComponent {
   ]);
 
   showAlert = false;
-  alertMsg = 'Please wait! Your account is beign created.';
+  alertMsg = 'Please wait! Your account is being created.';
   alertColor = 'blue';
 
   registerForm = new FormGroup(
@@ -55,7 +55,7 @@ export class RegisterComponent {
 
   async register() {
     this.showAlert = true;
-    this.alertMsg = 'Please wait! Your account is beign created.';
+    this.alertMsg = 'Please wait! Your account is being created.';
     this.alertColor = 'blue';
     this.inSubmission = true;
 
@@ -64,7 +64,7 @@ export class RegisterComponent {
     } catch (e) {
       console.error(e);
 
-      this.alertMsg = 'An unexpected error occured.Please try again later!!';
+      this.alertMsg = 'An unexpected error occurred.Please try again later!!';
       this.alertColor = 'red';
       this.inSubmission = false;
       return;

@@ -27,7 +27,8 @@ export class ModalService {
   isModalOpen(id: string): boolean {
     return !!this.modals.find((element) => element.id === id)?.visible;
 
-    //!! is used to turn the expression into a boolean because we dont want the function to return a value of undefined but we want it to return false|true
+    //!! is used to turn the expression into a boolean because we don't want the function to return a value of undefined,
+    // but we want it to return false|true
   }
 
   toggleModal(id: string) {
