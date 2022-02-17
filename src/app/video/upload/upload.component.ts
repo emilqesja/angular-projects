@@ -1,21 +1,14 @@
 import { Component, OnDestroy } from '@angular/core';
-
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-
 import {
   AngularFireStorage,
   AngularFireUploadTask,
 } from '@angular/fire/compat/storage';
-
 import { v4 as uuid } from 'uuid';
 import { last, switchMap } from 'rxjs/operators';
-
 import { AngularFireAuth } from '@angular/fire/compat/auth';
-
 import firebase from 'firebase/compat/app';
-
 import { ClipService } from 'src/app/services/clip.service';
-
 import { Router } from '@angular/router';
 
 @Component({
