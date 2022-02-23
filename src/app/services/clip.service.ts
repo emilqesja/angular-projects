@@ -12,16 +12,26 @@ import {
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFireStorage } from '@angular/fire/compat/storage';
 
+import {
+  Resolve,
+  ActivatedRouteSnapshot,
+  RouterStateSnapshot,
+  Router,
+} from '@angular/router';
+
 @Injectable({
   providedIn: 'root',
 })
-export class ClipService {
+export class ClipService implements Resolve<IClip | null> {
   public clipsCollection: AngularFirestoreCollection<IClip>;
+  pageClips: IClip[] = [];
+  pendingReq = false;
 
   constructor(
     private db: AngularFirestore,
     private auth: AngularFireAuth,
-    private storage: AngularFireStorage
+    private storage: AngularFireStorage,
+    private router: Router
   ) {
     this.clipsCollection = db.collection('clips');
   }
@@ -64,5 +74,55 @@ export class ClipService {
     await screenshotRef.delete();
 
     this.clipsCollection.doc(clip.docId).delete();
+  }
+
+  async getClips() {
+    if (this.pendingReq) {
+      return;
+    }
+
+    this.pendingReq = true;
+
+    let query = this.clipsCollection.ref.orderBy('timestamp', 'desc').limit(6);
+
+    const { length } = this.pageClips;
+
+    if (length) {
+      const lastDocID = this.pageClips[length - 1].docId;
+      const lastDoc = await this.clipsCollection
+        .doc(lastDocID)
+        .get()
+        .toPromise();
+
+      query = query.startAfter(lastDoc);
+    }
+
+    const snapshot = await query.get();
+
+    snapshot.forEach((doc) => {
+      this.pageClips.push({
+        docId: doc.id,
+        ...doc.data(),
+      });
+    });
+
+    this.pendingReq = false;
+  }
+
+  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+    return this.clipsCollection
+      .doc(route.params['id'])
+      .get()
+      .pipe(
+        map((snapshot) => {
+          const data = snapshot.data();
+
+          if (!data) {
+            this.router.navigate(['/']);
+            return null;
+          }
+          return data;
+        })
+      );
   }
 }
